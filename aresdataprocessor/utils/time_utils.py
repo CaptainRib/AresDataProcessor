@@ -21,6 +21,9 @@ def get_millisecs_from_datetime(datetime_str):
     nytz_datetime = datetime_obj.astimezone(pytz.timezone(NY_TZ))
     return int(nytz_datetime.timestamp() * 1000)
 
+def get_nanosecs_from_datetime(datetime_str):
+    return get_millisecs_from_datetime(datetime_str) * 1000000
+
 def calculate_time_diff(from_, to):
     return to - from_
 
