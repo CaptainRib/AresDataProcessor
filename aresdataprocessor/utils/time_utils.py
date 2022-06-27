@@ -25,6 +25,15 @@ def get_nanosecs_from_datetime(datetime_str):
     return get_millisecs_from_datetime(datetime_str) * 1000000
 
 def calculate_time_diff(from_, to):
+    '''Calculate the time difference between milliseconds
+
+    Args:
+        from_ (int): The start timestamp
+        to (int): The end timestamp
+
+    Returns:
+        int: The difference between from_ and to
+    '''
     return to - from_
 
 def calculate_timespan(aggregate_timespan, multipler):
@@ -51,3 +60,15 @@ def calculate_timespan(aggregate_timespan, multipler):
         time_in_seconds = 60 * 60 * 24 * 365  # Not sure about this yet
     
     return time_in_seconds * multipler * 1000
+
+def compare_time(time1, time2):
+    '''Compare two time objects
+
+    Args:
+        time1 (str): First time
+        time2 (str): Second time
+
+    Returns:
+        return true if time1 > time2, else return false
+    '''
+    return get_millisecs_from_datetime(time1) > get_millisecs_from_datetime(time2)

@@ -3,3 +3,6 @@ class InvalidInputException(Exception):
 
 class EmptyResultException(Exception):
     pass
+
+class InternalError(Exception):
+    pass
