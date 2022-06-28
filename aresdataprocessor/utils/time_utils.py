@@ -37,6 +37,15 @@ def calculate_time_diff(from_, to):
     return to - from_
 
 def calculate_timespan(aggregate_timespan, multipler):
+    '''Given a timespan and multipler, return timespan in milliseconds
+
+    Args:
+        aggregate_timespan (str): timespan
+        multipler (int): multipler
+
+    Returns:
+        int: timespan in milliseconds
+    '''
     time_in_seconds = 0
     if aggregate_timespan == 'minute':
         time_in_seconds = 60
