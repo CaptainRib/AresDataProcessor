@@ -3,7 +3,7 @@ from polygon import RESTClient
 from aresdataprocessor.config import creds
 from aresdataprocessor.utils import time_utils
 from polygon.exceptions import NoResultsError
-from aresdataprocessor.data_access.exceptions import InternalError, InvalidInputException, EmptyResultException
+from aresdataprocessor.exceptions.exceptions import InternalError, InvalidInputException, EmptyResultException
 
 
 class PolygonDataAccesssor():
@@ -13,9 +13,9 @@ class PolygonDataAccesssor():
     def get_aggregated_bars(self,
                             ticker: str,
                             aggregate_timespan: str,
-                            multipler: int,
-                            from_: str,
-                            to: str):
+                            multiplier: int,
+                            from_: int,
+                            to: int):
         '''Get aggregated bar
 
         Args:
@@ -28,20 +28,12 @@ class PolygonDataAccesssor():
         Returns:
             _type_: Return the aggregated bar information
         '''
-        start_time, end_time = self._validate_get_aggregated_bar_input(
-                ticker,
-                aggregate_timespan,
-                multipler,
-                from_,
-                to)
         try:
-            
-        
             bars = self.client.get_aggs(ticker=ticker,
-                                        multiplier=multipler,
+                                        multiplier=multiplier,
                                         timespan=aggregate_timespan,
-                                        from_=start_time,
-                                        to=end_time)
+                                        from_=from_,
+                                        to=to)
         except NoResultsError:
             raise EmptyResultException('Unable to find the corresponding result data')
         except:
@@ -62,36 +54,6 @@ class PolygonDataAccesssor():
         self._validate_list_trades(ticker, trade_timestamp_gte, trade_timestamp_lte, limit)
         result = self.client.list_trades(ticker, timestamp_gte=trade_timestamp_gte, timestamp_lte=trade_timestamp_lte, limit=limit)
         return result 
-        
-    def _validate_get_aggregated_bar_input(self,
-                                           ticker: str,
-                                           aggregate_timespan: str,
-                                           multipler: int,
-                                           from_: str,
-                                           to: str):
-        if not self._validate_ticker(ticker):
-            raise InvalidInputException('Ticker is not all upper case')
-        
-        if aggregate_timespan not in ['minute', 'hour', 'day', 'week', 'month', 'quarter', 'year']:
-            raise InvalidInputException('Timespan is not one of the valid')
-        
-        try:
-            start_time = time_utils.get_millisecs_from_datetime(from_)
-            end_time = time_utils.get_millisecs_from_datetime(to)
-        except:
-            raise InvalidInputException('Time is not in valid format')
-        
-        if start_time >= end_time:
-            raise InvalidInputException('Start time must be before end time')
-        
-        time_diff = time_utils.calculate_time_diff(start_time, end_time)
-        
-        queried_timespan_in_millsecs = time_utils.calculate_timespan(aggregate_timespan, multipler)
-
-        if time_diff != queried_timespan_in_millsecs:
-            raise InvalidInputException('The input timespan does not match the start and end time')
-        
-        return start_time, end_time
 
     def _validate_list_trades(self, ticker: str, trade_timestamp_gte: str, trade_timestamp_lte: str, limit: int=50000):
         if not self._validate_ticker(ticker):

@@ -81,3 +81,14 @@ def compare_time(time1, time2):
         return true if time1 > time2, else return false
     '''
     return get_millisecs_from_datetime(time1) > get_millisecs_from_datetime(time2)
+
+def split_timespan(from_: str, to: str, divisor: int):
+    start = get_millisecs_from_datetime(from_)
+    end = get_millisecs_from_datetime(to)
+    diff = calculate_time_diff(start, end)
+    interval = diff // divisor
+    time_paritions = []
+    for _ in range(divisor):
+        start += interval
+        time_paritions.append(start)
+    

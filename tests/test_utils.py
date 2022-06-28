@@ -29,3 +29,4 @@ class TestTimeUtils:
         assert result2 == 240000
         assert result3 == 864000000
         assert result4 == 3600000
+    
