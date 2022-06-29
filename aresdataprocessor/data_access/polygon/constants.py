@@ -9,4 +9,5 @@ class AggregateTimespan(Enum):
     MONTH = 'month'
     QUARTER = 'quarter'
     YEAR = 'year'
-    
+
+TIME_SPLIT_DIVISOR = 10

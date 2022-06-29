@@ -30,3 +30,11 @@ class TestTimeUtils:
         assert result3 == 864000000
         assert result4 == 3600000
     
+    def test_get_datetime_from_timestamp(self):
+        result1 = time_utils.get_datetime_from_timestamp(1655818260200)
+        assert result1 == '2022-06-21T09:31:00.200000-04:00'
+    
+    def test_split_timespan(self):
+        result = time_utils.split_timespan('2022-06-21T09:31:00-04:00', '2022-06-21T09:31:02-04:00', 10)
+        assert len(result) == 10
+        

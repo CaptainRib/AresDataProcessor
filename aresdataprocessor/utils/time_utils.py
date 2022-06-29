@@ -1,6 +1,8 @@
 import datetime, pytz
 import pandas as pd
 import iso8601
+import rfc3339
+
 
 
 EASTERN_TIME = 'US/Eastern'
@@ -23,6 +25,15 @@ def get_millisecs_from_datetime(datetime_str):
 
 def get_nanosecs_from_datetime(datetime_str):
     return get_millisecs_from_datetime(datetime_str) * 1000000
+
+def get_datetime_from_timestamp(timestamp):
+    # Timestamp has to be in ms
+    dt = pd.to_datetime(timestamp, unit='ms', utc=True).to_pydatetime()
+    nytz_dt = dt.astimezone(pytz.timezone(NY_TZ))
+    return nytz_dt.isoformat()
+
+def get_microseconds_from_datetime(datetime_str):
+    return get_millisecs_from_datetime(datetime_str) * 1000
 
 def calculate_time_diff(from_, to):
     '''Calculate the time difference between milliseconds
@@ -87,8 +98,13 @@ def split_timespan(from_: str, to: str, divisor: int):
     end = get_millisecs_from_datetime(to)
     diff = calculate_time_diff(start, end)
     interval = diff // divisor
-    time_paritions = []
+    time_paritions = [start]
     for _ in range(divisor):
         start += interval
         time_paritions.append(start)
-    
+    return _construct_time_range_pair_from_partition(time_paritions) 
+
+def _construct_time_range_pair_from_partition(partition: list):
+    partition_dt = [get_datetime_from_timestamp(timestamp) for timestamp in partition]
+    result = list(zip(partition_dt[:-1], partition_dt[1:]))
+    return result

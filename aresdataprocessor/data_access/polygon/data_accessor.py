@@ -1,9 +1,9 @@
-from numpy import int64
 from polygon import RESTClient
 from aresdataprocessor.config import creds
-from aresdataprocessor.utils import time_utils
 from polygon.exceptions import NoResultsError
 from aresdataprocessor.exceptions.exceptions import InternalError, InvalidInputException, EmptyResultException
+from aresdataprocessor.utils import time_utils
+from aresdataprocessor.data_access.polygon.constants import TIME_SPLIT_DIVISOR
 
 
 class PolygonDataAccesssor():
@@ -51,19 +51,11 @@ class PolygonDataAccesssor():
         Returns:
             generator: A generator for trades 
         '''
-        self._validate_list_trades(ticker, trade_timestamp_gte, trade_timestamp_lte, limit)
+        splited_timerange = time_utils.split_timespan(trade_timestamp_gte, trade_timestamp_lte, TIME_SPLIT_DIVISOR)
         result = self.client.list_trades(ticker, timestamp_gte=trade_timestamp_gte, timestamp_lte=trade_timestamp_lte, limit=limit)
-        return result 
+        return result
 
-    def _validate_list_trades(self, ticker: str, trade_timestamp_gte: str, trade_timestamp_lte: str, limit: int=50000):
-        if not self._validate_ticker(ticker):
-            raise InvalidInputException('Ticker is not all upper case')
 
-        if time_utils.compare_time(trade_timestamp_gte, trade_timestamp_lte):
-            raise InvalidInputException('The query start time must be before end time')
-        
-        if limit <= 0 or limit > 50000:
-            raise InvalidInputException('The limit is out of range')
     
     def _validate_ticker(self, ticker: str) -> bool:
         return ticker.isupper()
